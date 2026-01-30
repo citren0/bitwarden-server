@@ -1,0 +1,30 @@
+services:
+  webserver:
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "7890:7890"
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+      - ./certs:/certs
+    depends_on:
+      - vaultwarden
+    networks:
+      - default
+
+  vaultwarden:
+    hostname: vaultwarden
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DOMAIN: "https://ops.cam-davis.com"
+      SIGNUPS_ALLOWED: "false"
+      INVITATIONS_ALLOWED: "false"
+    volumes:
+      - ./vw-data/:/data/
+    expose:
+      - 80
+
+networks:
+  default:
