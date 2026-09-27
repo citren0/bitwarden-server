@@ -11,6 +11,17 @@ services:
       - vaultwarden
     networks:
       - default
+    healthcheck:
+      test: ["CMD", "curl", "-fk", "https://localhost:7890/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
 
   vaultwarden:
     hostname: vaultwarden
@@ -18,13 +29,18 @@ services:
     container_name: vaultwarden
     restart: unless-stopped
     environment:
-      DOMAIN: "https://ops.cam-davis.com"
+      DOMAIN: "https://internal.cam-davis.com"
       SIGNUPS_ALLOWED: "false"
       INVITATIONS_ALLOWED: "false"
     volumes:
       - ./vw-data/:/data/
     expose:
       - 80
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
 
 networks:
   default:
